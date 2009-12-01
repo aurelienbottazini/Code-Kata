@@ -3,38 +3,36 @@ class Madlibs
 
   def initialize(filepath)
     @madlib = File.read(filepath)
-    @words = @madlib.scan(/\(\([^(\)\))]+\)\)/)
-    @words_repeated = @words.map { |m| m[2..-3] }.select { |s| s =~ /.+:.+/ }.map { | m | m.split(":")[0] }
+    @words = @madlib.scan(/\(\([^(\)\))]+\)\)/).map { |m| m[2..-3] }
+    @words_repeated = @words.select { |s| s =~ /.+:.+/ }.map { | m | m.split(":")[0] }
+    @answers = Hash.new
   end
 
   def ask
-    
-    @words.reject { |r| @words_repeated.include?(r[2..-3]) }.each do |w|
-      multiple = false
+    @words.reject { |r| @words_repeated.include?(r) }.each do |w|
       
       if w.include?(":")
-        multiple = true
-        puts "Give me #{w[2..-3].split(":")[1]}."
+        puts "Give me #{w.split(":")[1]}."
       else
-        puts "Give me #{w[2..-3]}."
+        puts "Give me #{w}."
       end
       
-      answer = gets.chomp
-      @madlib.sub!(w, answer)
-      if multiple
-        @madlib.gsub!("((" + w[2..-3].split(":")[0] + "))", answer)
-      end
-      
+      @answers[w.to_sym] = gets.chomp
     end
   end
 
-  def display
-    puts @madlib
+  def computed
+    @answers.keys.each do |a|
+     @madlib.sub!("((" + a.to_s + "))", @answers[a])
+      if a.to_s.include?(":")
+        @madlib.gsub!("((" + a.to_s.split(":")[0] + "))", @answers[a])
+      end
+    end
+    @madlib
   end
 
 end
 
-madlib = Madlibs.new("Gift_Giving.madlib")
-
+madlib =  Madlibs.new("Gift_Giving.madlib")
 madlib.ask
-madlib.display
+puts madlib.computed
