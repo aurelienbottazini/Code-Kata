@@ -22,4 +22,6 @@ end
 
 madlib = Madlibs.new("Gift_Giving.madlib")
 
-madlib.ask
+# madlib.ask
+
+p madlib.instance_variable_get("words")
