@@ -1,0 +1,1 @@
+Original idea from Dave Thomas: http://www.codekata.com/2007/01/code_katahow_it.html
