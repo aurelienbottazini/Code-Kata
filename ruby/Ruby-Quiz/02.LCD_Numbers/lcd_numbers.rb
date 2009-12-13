@@ -32,6 +32,10 @@ class LCDNumbers
       when '9' then temp_array_number = nine
       end
       
+      temp_array_number.map! do |row|
+        row = row[0..0] + row[1..1] * @size + row[2..2]
+      end
+      
       output_array[0] += temp_array_number[0]
       output_array[1] += temp_array_number[1]
       output_array[2] += temp_array_number[2]
@@ -41,7 +45,13 @@ class LCDNumbers
     
     
     output_array.each do |row|
-      output << row + "\n"
+      if row.include? "|"
+        @size.times do
+          output << row + "\n"
+        end
+      else
+        output << row + "\n"    
+      end
     end
     
     output
