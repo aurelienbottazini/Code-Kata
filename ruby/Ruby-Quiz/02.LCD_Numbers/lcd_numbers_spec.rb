@@ -13,13 +13,13 @@ describe LCDNumbers do
   end
   
   it "should correctly display 1234567890" do
-    LCDNumbers.new(1234567890).to_s.should eql "     --  --      --  --  --  --  --  -- \n   |   |   ||  ||   |      ||  ||  ||  |\n   |   |   ||  ||   |      ||  ||  ||  |\n     --  --  --  --  --      --  --     \n   ||      |   |   ||  |   ||  |   ||  |\n   ||      |   |   ||  |   ||  |   ||  |\n     --  --      --  __      --  --  -- \n"
+    LCDNumbers.new(1234567890).to_s.should eql "     --  --      --  --  --  --  --  -- \n   |   |   ||  ||   |      ||  ||  ||  |\n   |   |   ||  ||   |      ||  ||  ||  |\n     --  --  --  --  --      --  --     \n   ||      |   |   ||  |   ||  |   ||  |\n   ||      |   |   ||  |   ||  |   ||  |\n     --  --      --  --      --  --  -- \n"
   end
   
   it "should correctly display 6789 with a size of 1" do
     lcd_numbers = LCDNumbers.new(6789)
     lcd_numbers.size = 1
-    lcd_numbers.to_s.should eql " -  -  -  - \n|    || || |\n -     -  - \n| |  || |  |\n _     -  - \n"
+    lcd_numbers.to_s.should eql " -  -  -  - \n|    || || |\n -     -  - \n| |  || |  |\n -     -  - \n"
   end
   
 end

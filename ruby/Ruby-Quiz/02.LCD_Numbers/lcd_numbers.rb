@@ -9,12 +9,7 @@ class LCDNumbers
   def to_s
     output = String.new
 
-    output_array = Array.new
-    output_array[0] = ""
-    output_array[1] = ""
-    output_array[2] = ""
-    output_array[3] = ""
-    output_array[4] = ""
+    output_array = ['','','','','']
     
     @number.to_s.each_char do |c|
       temp_array_number = Array.new
@@ -36,11 +31,9 @@ class LCDNumbers
         row = row[0..0] + row[1..1] * @size + row[2..2]
       end
       
-      output_array[0] += temp_array_number[0]
-      output_array[1] += temp_array_number[1]
-      output_array[2] += temp_array_number[2]
-      output_array[3] += temp_array_number[3]
-      output_array[4] += temp_array_number[4]
+      temp_array_number.each_with_index do |e, i|
+        output_array[i] += e
+      end
     end
     
     
@@ -66,7 +59,6 @@ class LCDNumbers
     val << "   "
     val << "| |"
     val << " - "
-    val
   end
 
   def one
@@ -76,7 +68,6 @@ class LCDNumbers
     val << "   "
     val << "  |"
     val << "   "
-    val
   end
 
   def two
@@ -86,7 +77,6 @@ class LCDNumbers
     val << " - "
     val << "|  "
     val << " - "
-    val
   end
 
   def three
@@ -96,7 +86,6 @@ class LCDNumbers
     val << " - "
     val << "  |"
     val << " - "
-    val
   end
 
   def four
@@ -106,7 +95,6 @@ class LCDNumbers
     val << " - "
     val << "  |"
     val << "   "
-    val
   end
 
   def five
@@ -116,7 +104,6 @@ class LCDNumbers
     val << " - "
     val << "  |"
     val << " - "
-    val
   end
 
   def six
@@ -125,8 +112,7 @@ class LCDNumbers
     val << "|  "
     val << " - "
     val << "| |"
-    val << " _ "
-    val
+    val << " - "
   end
 
   def seven
@@ -136,7 +122,6 @@ class LCDNumbers
     val << "   "
     val << "  |"
     val << "   "
-    val
   end
 
   def height
@@ -146,7 +131,6 @@ class LCDNumbers
     val << " - "
     val << "| |"
     val << " - "
-    val
   end
 
   def nine
