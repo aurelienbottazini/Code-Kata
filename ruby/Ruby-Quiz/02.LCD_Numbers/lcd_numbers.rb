@@ -20,19 +20,10 @@ class LCDNumbers
     output_array = ['','','','','']
     
     @number.to_s.each_char do |c|
-      temp_array_number = Array.new
       
       integer =  c.to_i             
       0.upto(4).each do |i|
-        temp_array_number[i] = NUMBERS[i][integer]
-      end
-      
-      temp_array_number.map! do |row|
-        row = row[0..0] + row[1..1] * @size + row[2..2]
-      end
-      
-      temp_array_number.each_with_index do |e, i|
-        output_array[i] += e
+        output_array[i] += NUMBERS[i][integer][0..0] + NUMBERS[i][integer][1..1] * @size + NUMBERS[i][integer][2..2]
       end
     end
     
