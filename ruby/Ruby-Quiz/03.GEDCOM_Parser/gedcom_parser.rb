@@ -1,42 +1,44 @@
-require 'rubygems'
-require 'builder'
+require 'rexml/document'
 
 class GEDCOMParser
-  @gedcom_lines
 
   def initialize filepath
     @gedcom_lines = File.readlines(filepath)
   end
 
   def to_xml
-    xml_buffer = String.new
-    xm = Builder::XmlMarkup.new(:target => xml_buffer,
-                                :indent => 2)
-    xm.gedcom do
-      last_depth = -1
-      @gedcom_lines.each do |l|
-        splitted_line = l.chomp.split(/ +/)
-        current_depth = splitted_line[0].to_i
+    xml = REXML::Element.new('gedcom')
 
-        current_text = String.new
-        if splitted_line[1].index('@')
-          current_tag = splitted_line[2]
-          xm.tag!(current_tag.downcase,
-                  :id => splitted_line[1])
-        else
-          current_tag = splitted_line[1]
-          splitted_line[2..splitted_line.size].each do |s|
-            current_text << s + ' '
-          end
-          current_text.chop!
-          xm.tag!(current_tag.downcase, current_text)
-        end
+    stack = Array.new
+    stack.push xml
+    last_depth = 0
+    @gedcom_lines.each do |l|
+      splitted_line = l.chomp.split(/\s+/)
 
-
-
-        last_depth = current_depth
+      current_depth = splitted_line[0].to_i
+      while((current_depth + 1) < stack.size) do
+        stack.pop
       end
+      element = stack.last
+
+      attribute = false
+      if splitted_line[1].index('@')
+        current_tag = splitted_line[2]
+        attribute = true
+      else
+        current_tag = splitted_line[1]
+      end
+      element = element.add_element(current_tag.downcase)
+      element.add_attribute('id', splitted_line[1]) if attribute
+      data = splitted_line[2..splitted_line.size].map { |x| x + ' '}.to_s.chop
+      element.add_text(data) unless attribute
+
+      stack.push element
     end
-    xml_buffer
+
+
+    xml.to_s
   end
+
+
 end
