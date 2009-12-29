@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 require 'yaml'
 
 class Node
@@ -10,7 +10,7 @@ class Node
   end
 
   def ask
-    
+    puts @question
   end
 end
 
