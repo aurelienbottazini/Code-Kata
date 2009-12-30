@@ -1,24 +1,28 @@
-#!/usr/bin/env ruby -w
+#!/usr/bin/env ruby
 require 'yaml'
 
 class Node
-  def initialize
-    @yes = nil
-    @no = nil
-    @leaf = false
+  attr_writer :animal, :leaf
+
+  def initialize yes_node=nil, no_node=nil
+    @yes_node = yes_node
+    @no_node = no_node
+    @leaf = true
     @question = String.new
+    @animal = String.new
   end
 
-  def ask
-    puts @question
-  end
 end
 
-
-animal_tree = YAML.load(File.read('animals.yml')) if File.exists?('animals.yml')
+animal_tree = nil
+if File.exists?('animals.yml')
+  animal_tree = YAML.load(File.read('animals.yml'))
+else
+  animal_tree = Node.new
+  animal_tree.animal = 'Elephant'
+end
 
 puts 'Think of an animal...'
 while true
-  answer = gets.chomp
-  break if answer == 'n'
+  animal_tree.ask
 end
