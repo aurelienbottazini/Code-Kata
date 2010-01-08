@@ -11,18 +11,17 @@ class Node
     @question = String.new
     @animal = String.new
   end
-
 end
 
 animal_tree = nil
 if File.exists?('animals.yml')
   animal_tree = YAML.load(File.read('animals.yml'))
 else
-  animal_tree = Node.new
+n  animal_tree = Node.new
   animal_tree.animal = 'Elephant'
 end
 
 puts 'Think of an animal...'
 while true
-  animal_tree.ask
+
 end
