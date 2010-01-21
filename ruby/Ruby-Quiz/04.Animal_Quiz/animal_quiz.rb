@@ -7,10 +7,8 @@ require 'yaml'
 # on.... Eventually, it will narrow down the possibilities to a single
 # animal and guess: is it a mouse?
 class Question
-  attr_writer :yes
-  attr_writer :no
-  attr_reader :yes
-  attr_reader :no
+  attr_accessor :yes
+  attr_accessor :no
   attr_reader :answer
 
   def initialize answer, question = nil, parent = nil
