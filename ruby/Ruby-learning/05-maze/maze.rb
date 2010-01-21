@@ -55,8 +55,9 @@ class Maze
     set_char(position, MARK, maze)
   end
 
-  # Recursively tries to find exits and also sets the number of
-  # steps upon success in @steps
+  # Recursively tries to find exits and also register the number of
+  # steps when an way to exit the maze is found in @steps
+  # This algorithm will try find all possible paths
   def find_exit(position, steps, maze)
     
     if is_exit?(position)
