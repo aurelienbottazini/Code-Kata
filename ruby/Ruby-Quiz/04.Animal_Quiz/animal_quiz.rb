@@ -11,21 +11,21 @@ require 'yaml'
 class Question
   attr_accessor :yes
   attr_accessor :no
-  attr_accessor :answer
+  attr_accessor :animal
   attr_accessor :question
   
-  def initialize question = nil, answer = nil
-    @yes = false
+  def initialize animal = nil
+    @yes = true
     @no = false
     @question = question
-    @answer = answer
+    @animal = animal
   end
 
   def ask?
     if @question
       puts "#{@question} (y or n)"
     else
-      puts "Is it #{@answer}? (y or n)"
+      puts "Is it #{@animal}? (y or n)"
     end
 
     answer = gets.chomp
@@ -51,7 +51,7 @@ root_question = nil
 if File.exists?('questions.yml')
   root_question = YAML.load(File.read('questions.yml'))
 else
-  root_question = Question.new(nil, "elephant")
+  root_question = Question.new("an elephant")
   root_question.yes = true
 end
 
@@ -60,7 +60,6 @@ current_question = root_question
 
 
 run_loop = true
-i = 0
 while run_loop
 
 
@@ -71,6 +70,7 @@ while run_loop
     puts 'I win. Pretty smart, aren\'t I?'
 
     if play_again?
+      puts 'Think of an animal...'
       current_question = root_question
     else
       run_loop = false
@@ -82,22 +82,19 @@ while run_loop
     new_animal = gets.chomp
 
     print "Give me a question to distinguish #{new_animal} from "
-    puts "#{current_question.answer} "
+    puts "#{current_question.animal} "
     new_animal_question = gets.chomp
     puts "For #{new_animal} what is the answer to your question? (y or n)"
 
     new_animal_answer = gets.chomp
 
     
-    new_question = Question.new(nil, new_animal)
-    new_question.yes = true
-
-    old_question = Question.new(nil, current_question.answer)
-    old_question.yes = true
+    new_question = Question.new(new_animal)
+    old_question = Question.new(current_question.animal)
 
 
     current_question.question = new_animal_question
-    current_question.answer = nil
+    current_question.animal = nil
     
     if new_animal_answer == 'y'
       current_question.yes = new_question
@@ -109,6 +106,7 @@ while run_loop
     end
 
     if play_again?
+      puts 'Think of an animal...'
       current_question = root_question
     else
       run_loop = false
@@ -118,7 +116,7 @@ while run_loop
   else # navigating in the binary tree
     current_question = answer
   end
-  ++i
+
 end
 
 f = File.new('questions.yml', "w")
