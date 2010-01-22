@@ -1,37 +1,35 @@
 #!/usr/bin/env ruby
+=begin rdoc
+ It works like this: The program starts by telling the user to think
+ of an animal. It then begins asking a series of yes/no questions
+ about that animal: Does it swim? Does it have hair? And so
+ on.... Eventually, it will narrow down the possibilities to a single
+ animal and guess: is it a mouse?
+=end
 require 'yaml'
 
-# It works like this: The program starts by telling the user to think
-# of an animal. It then begins asking a series of yes/no questions
-# about that animal: Does it swim? Does it have hair? And so
-# on.... Eventually, it will narrow down the possibilities to a single
-# animal and guess: is it a mouse?
 class Question
   attr_accessor :yes
   attr_accessor :no
-  attr_reader :answer
-
-  def initialize answer, question = nil, parent = nil
+  attr_accessor :answer
+  attr_accessor :question
+  
+  def initialize question = nil, answer = nil
     @yes = false
     @no = false
-    @answer = answer
     @question = question
-    @parent = parent
+    @answer = answer
   end
 
   def ask?
     if @question
-      puts @question + " (y or n)"
-      answer = gets.chomp
-      answer_node = (answer == 'y') ? yes : no
-      if answer_node
-        puts "Is it #{@answer}? (y or n)"
-      else
-        puts "Is is #{@parent.answer}? (y or n)"
-      end
+      puts "#{@question} (y or n)"
     else
       puts "Is it #{@answer}? (y or n)"
     end
+
+    answer = gets.chomp
+    return (answer == 'y') ? yes : no
   end
 
 end
@@ -53,7 +51,7 @@ root_question = nil
 if File.exists?('questions.yml')
   root_question = YAML.load(File.read('questions.yml'))
 else
-  root_question = Question.new("an elephant")
+  root_question = Question.new(nil, "elephant")
   root_question.yes = true
 end
 
@@ -62,11 +60,11 @@ current_question = root_question
 
 
 run_loop = true
+i = 0
 while run_loop
-  current_question.ask?
-  answer = gets.chomp
 
-  answer = (answer == 'y') ? current_question.yes : current_question.no
+
+  answer = current_question.ask?
 
   case answer
   when true
@@ -84,20 +82,30 @@ while run_loop
     new_animal = gets.chomp
 
     print "Give me a question to distinguish #{new_animal} from "
-    puts "#{current_question.answer} " 
-    new_question = gets.chomp
-    puts "For a #{new_animal} what is the answer to your question? (y or n)"
+    puts "#{current_question.answer} "
+    new_animal_question = gets.chomp
+    puts "For #{new_animal} what is the answer to your question? (y or n)"
 
     new_animal_answer = gets.chomp
 
-    new_question_node = Question.new(new_animal, new_question, current_question)
+    
+    new_question = Question.new(nil, new_animal)
+    new_question.yes = true
 
+    old_question = Question.new(nil, current_question.answer)
+    old_question.yes = true
+
+
+    current_question.question = new_animal_question
+    current_question.answer = nil
+    
     if new_animal_answer == 'y'
-      new_question_node.yes = true
-      current_question.no = new_question_node
+      current_question.yes = new_question
+      current_question.no = old_question
+      
     else
-      new_question_node.no = true
-      current_question.yes = new_question_node
+      current_question.no = new_question
+      current_question.yes = old_question
     end
 
     if play_again?
@@ -105,9 +113,12 @@ while run_loop
     else
       run_loop = false
     end
-  else
+
+    
+  else # navigating in the binary tree
     current_question = answer
   end
+  ++i
 end
 
 f = File.new('questions.yml', "w")
