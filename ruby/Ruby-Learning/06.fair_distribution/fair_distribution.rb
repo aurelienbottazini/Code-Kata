@@ -13,69 +13,126 @@ at the end I take the minimal solution in my list
 
 =end
 
+#TODO check when no distribution present or all 0
 class FairDistribution
 
   def initialize jobs, number_of_presses
 
-    @press_array = Array.new
+    @distributions = Array.new
 
     @number_of_presses = number_of_presses
 
-    distribution = Array.new
-    distribution << Array.new
-    distribution[0] << jobs.max
-    distribute_jobs distribution, jobs
+    distrib = Array.new
+    distrib << Array.new
+    job_index = 0
+    max = 0
+    jobs.each_with_index do |job, index|
+      if job > max
+        max = job
+        job_index = index
+      end
+    end
 
-    p @press_array
+    distrib[0] << max
+    jobs.slice!(job_index)
+    distribute_jobs distrib, jobs
+
+    p @distributions
   end
 
 
   def time_required
-    return get_hard_worker_press.work
+
+    time_required = 0.0
+
+    @distributions.each do |dist|
+      distribution_max = 0
+      dist.each do |press|
+        if press.reduce(0.0, :+) > distribution_max
+          distribution_max =  press.reduce(0.0, :+)
+        end
+      end
+
+      if time_required = 0 || time_required > distribution_max
+        time_required = distribution_max
+      end
+
+    end
+
+    return time_required
   end
 
   def distribution
-    @press_array.map { |press| press.job_list}
+    distrib = nil
+
+    time_required = 0.0
+    
+     @distributions.each do |dist|
+      distribution_max = 0
+      dist.each do |press|
+        if press.reduce(0.0, :+) > distribution_max
+          distribution_max =  press.reduce(0.0, :+)
+        end
+      end
+
+      if time_required = 0 || time_required > distribution_max
+        time_required = distribution_max
+        distrib = dist
+      end
+
+    end
+    
+    return distrib
   end
 
   private
 
-  def distribute_jobs distribution, jobs
+  def distribute_jobs distrib, jobs
 
-    if distribution.size == @number_of_presses
+    if distrib.size == @number_of_presses
       # we are done, add remaining job in new press and add / return
       # solution
-      distribution.pop
-      distribution << jobs
-      @press_array << distribution
+      distrib.pop
+      distrib << jobs
+
+      distribution_max = 0
+      distrib.each do |press|
+        if press.reduce(0.0, :+) > distribution_max
+          distribution_max =  press.reduce(0.0, :+)
+        end
+      end
+
+      if distribution_max < time_required || time_required == 0 
+              @distributions << distrib
+      end
       return
     end
 
+    
     jobs.each_with_index do |job, index|
       new_distribution = Array.new
-      distribution.each { |e| new_distribution << e.dup }
+      distrib.each { |e| new_distribution << e.dup }
 
       new_distribution.last << job
 
       jobs_copy = jobs.dup
       jobs_copy.slice!(index)
-      
+
       average = jobs_copy.reduce(0.0, :+) / (@number_of_presses - new_distribution.size)
       if average <= new_distribution.last.reduce(0.0, :+)
         new_distribution << Array.new
       end
 
       distribute_jobs new_distribution, jobs_copy
+
     end
 
   end
 
 end
-
-
-jobs              = [10, 15, 20, 24, 30, 45, 75]
-number_of_presses = 2
-
-exp_max           = 110
+jobs              = [1.0, 4.75, 2.83, 1.1, 5.8, 3.5, 4.4]
+number_of_presses = 4
 
 fd = FairDistribution.new(jobs, number_of_presses)
+p fd.time_required
+p fd.distribution
