@@ -12,21 +12,23 @@ else we have possibles solutions
 at the end I take the minimal solution in my list
 
 =end
+
 class FairDistribution
 
   def initialize jobs, number_of_presses
 
     @press_array = Array.new
-    1.upto(number_of_presses) { @press_array << Press.new }
- 
-    @jobs = jobs.sort {|x,y| y <=> x }
-    @jobs.each do |job|
-      press = get_lazy_press
-      press.add_job(job)
-    end
 
-    p distribution
+    @number_of_presses = number_of_presses
+
+    distribution = Array.new
+    distribution << Array.new
+    distribution[0] << jobs.max
+    distribute_jobs distribution, jobs
+
+    p @press_array
   end
+
 
   def time_required
     return get_hard_worker_press.work
@@ -38,32 +40,42 @@ class FairDistribution
 
   private
 
-  Press = Class.new do
-    attr_reader :job_list
+  def distribute_jobs distribution, jobs
 
-    def initialize
-      @job_list = Array.new
+    if distribution.size == @number_of_presses
+      # we are done, add remaining job in new press and add / return
+      # solution
+      distribution.pop
+      distribution << jobs
+      @press_array << distribution
+      return
     end
 
-    def add_job job
-      @job_list << job
-    end
+    jobs.each_with_index do |job, index|
+      new_distribution = Array.new
+      distribution.each { |e| new_distribution << e.dup }
 
-    def work
-      sum = 0
-      @job_list.each do |job|
-        sum = sum + job
+      new_distribution.last << job
+
+      jobs_copy = jobs.dup
+      jobs_copy.slice!(index)
+      
+      average = jobs_copy.reduce(0.0, :+) / (@number_of_presses - new_distribution.size)
+      if average <= new_distribution.last.reduce(0.0, :+)
+        new_distribution << Array.new
       end
-      sum
+
+      distribute_jobs new_distribution, jobs_copy
     end
-  end
 
-  def get_lazy_press
-    @press_array.min { |a,b| a.work <=> b.work }
-  end
-
-  def get_hard_worker_press
-    @press_array.max { |a,b| a.work <=> b.work }
   end
 
 end
+
+
+jobs              = [10, 15, 20, 24, 30, 45, 75]
+number_of_presses = 2
+
+exp_max           = 110
+
+fd = FairDistribution.new(jobs, number_of_presses)
