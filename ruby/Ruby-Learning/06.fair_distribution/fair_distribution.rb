@@ -1,138 +1,118 @@
-=begin rdoc
-I start with a number of press and numbers.
-I create all possible list of distribution containing the largest number + *1,(associated remaining numbers). I compute the following average: remaining numbers sum/number of remaining presses
-  if average < current_distrib_sum-> mark as possible
-if everything is impossible we recreate all the tuples but this time with one more number and redo the average computation
-else we have possibles solutions
-  if press = 1
-    we put all remaning numbers in the last press and we have a solution I save it
-  else
-    I follow the same logic with the remaining numbers, creating tuples computing average etc...
+require 'rubygems'
+require 'ruby-debug'
 
-at the end I take the minimal solution in my list
-
-=end
-
-#TODO check when no distribution present or all 0
 class FairDistribution
+
+  attr_accessor :distribution
 
   def initialize jobs, number_of_presses
 
-    @distributions = Array.new
+    @distribution = nil
 
     @number_of_presses = number_of_presses
 
     distrib = Array.new
     distrib << Array.new
-    job_index = 0
-    max = 0
-    jobs.each_with_index do |job, index|
-      if job > max
-        max = job
-        job_index = index
-      end
-    end
-
-    distrib[0] << max
-    jobs.slice!(job_index)
-    distribute_jobs distrib, jobs
-
-    p @distributions
+    distribute_jobs distrib, jobs.dup
   end
 
+  def time_required distrib=@distribution
 
-  def time_required
+    if distrib == nil
+      return 0
+    end
 
     time_required = 0.0
 
-    @distributions.each do |dist|
-      distribution_max = 0
-      dist.each do |press|
-        if press.reduce(0.0, :+) > distribution_max
-          distribution_max =  press.reduce(0.0, :+)
-        end
+    distrib[0..distrib.size].each do |d|
+      if d.reduce(0.0, :+) > time_required || time_required == 0.0
+        time_required = d.reduce(0.0, :+)
       end
-
-      if time_required = 0 || time_required > distribution_max
-        time_required = distribution_max
-      end
-
     end
 
     return time_required
-  end
-
-  def distribution
-    distrib = nil
-
-    time_required = 0.0
-    
-     @distributions.each do |dist|
-      distribution_max = 0
-      dist.each do |press|
-        if press.reduce(0.0, :+) > distribution_max
-          distribution_max =  press.reduce(0.0, :+)
-        end
-      end
-
-      if time_required = 0 || time_required > distribution_max
-        time_required = distribution_max
-        distrib = dist
-      end
-
-    end
-    
-    return distrib
   end
 
   private
 
   def distribute_jobs distrib, jobs
 
+    # si on est au nombre max de distrib, on arrete
     if distrib.size == @number_of_presses
-      # we are done, add remaining job in new press and add / return
-      # solution
-      distrib.pop
-      distrib << jobs
-
-      distribution_max = 0
-      distrib.each do |press|
-        if press.reduce(0.0, :+) > distribution_max
-          distribution_max =  press.reduce(0.0, :+)
-        end
+      jobs.each do |job|
+        distrib.last << job
       end
 
-      if distribution_max < time_required || time_required == 0 
-              @distributions << distrib
+      if  time_required(distrib) < time_required(@distribution) || @distribution == nil
+        @distribution = distrib
       end
-      return
     end
 
-    
-    jobs.each_with_index do |job, index|
-      new_distribution = Array.new
-      distrib.each { |e| new_distribution << e.dup }
+    if time_required(distrib) <= time_required || time_required == 0
+      jobs.each_with_index do |job, index|
+        distrib_copy =  dup_distrib(distrib)
 
-      new_distribution.last << job
+        distrib_copy.last << job
+        jobs_copy = jobs.dup
+        jobs_copy.slice!(index)
 
-      jobs_copy = jobs.dup
-      jobs_copy.slice!(index)
+        distribute_jobs distrib_copy, jobs_copy
 
-      average = jobs_copy.reduce(0.0, :+) / (@number_of_presses - new_distribution.size)
-      if average <= new_distribution.last.reduce(0.0, :+)
-        new_distribution << Array.new
+        distrib_copy2 = dup_distrib(distrib_copy)
+        distrib_copy2 << Array.new
+        distribute_jobs distrib_copy2, jobs_copy.dup
       end
-
-      distribute_jobs new_distribution, jobs_copy
-
     end
+  end
+
+  def dup_distrib distrib
+    new_distrib = Array.new
+
+    distrib.each do |d|
+      new_distrib << d.dup
+    end
+
+    return new_distrib
+  end
+
+  def standard_deviation distrib
+    mean = 0.0
+    sum = 0.0
+    distrib.each do |d|
+      sum =+ d.reduce(0.0, :+)
+    end
+
+    mean = sum / distrib.size
 
   end
 
 end
-jobs              = [1.0, 4.75, 2.83, 1.1, 5.8, 3.5, 4.4]
-number_of_presses = 4
 
-fd = FairDistribution.new(jobs, number_of_presses)
-p fd.time_required
-p fd.distribution
+
+# fd = FairDistribution.new([0.23, 0.47, 0.73, 1.5, 3.0, 3.2], 4)
+# fd.time_required
+# p fd.distribution
+
+def standard_deviation distrib
+
+  sums = Array.new
+  distrib.each do |d|
+    sums << d.reduce(0.0, :+)
+  end
+
+  mean = sums.reduce(0.0, :+) / distrib.size
+  variance = sums.inject(0.0) {|sum, n| sum + (n - mean) * (n - mean) } / distrib.size
+
+  return Math.sqrt(variance)
+end
+
+p standard_deviation  [
+                       [2],
+                       [4],
+                       [4],
+                       [4],
+                       [5],
+                       [5],
+                       [7],
+                       [9]
+                      ]
