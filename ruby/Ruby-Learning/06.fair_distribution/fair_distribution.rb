@@ -42,25 +42,34 @@ class FairDistribution
       jobs.each do |job|
         distrib.last << job
       end
-
-      if  time_required(distrib) < time_required(@distribution) || @distribution == nil
+      #emptying array as, all remaining elements have been added
+      jobs = Array.new
+      
+      if @distribution == nil
         @distribution = distrib
+      end
+      if  time_required(distrib) <= time_required(@distribution)
+        if standard_deviation(distrib) < standard_deviation(@distribution)
+          @distribution = distrib
+        end
       end
     end
 
-    if time_required(distrib) <= time_required || time_required == 0
+    if time_required(distrib) <= time_required || @distribution == nil
       jobs.each_with_index do |job, index|
+        
         distrib_copy =  dup_distrib(distrib)
-
         distrib_copy.last << job
         jobs_copy = jobs.dup
         jobs_copy.slice!(index)
 
-        distribute_jobs distrib_copy, jobs_copy
-
         distrib_copy2 = dup_distrib(distrib_copy)
         distrib_copy2 << Array.new
-        distribute_jobs distrib_copy2, jobs_copy.dup
+        jobs_copy2 = jobs.dup
+        jobs_copy2.slice!(index)
+        
+        distribute_jobs distrib_copy, jobs_copy
+        distribute_jobs distrib_copy2, jobs_copy2
       end
     end
   end
@@ -76,43 +85,24 @@ class FairDistribution
   end
 
   def standard_deviation distrib
-    mean = 0.0
-    sum = 0.0
+
+    sums = Array.new
     distrib.each do |d|
-      sum =+ d.reduce(0.0, :+)
+      sums << d.reduce(0.0, :+)
     end
 
-    mean = sum / distrib.size
+    mean = sums.reduce(0.0, :+) / distrib.size
+    variance = sums.inject(0.0) {|sum, n| sum + (n - mean) * (n - mean) } / distrib.size
 
+    return Math.sqrt(variance)
   end
 
 end
 
+jobs              = [0.23, 0.47, 0.73, 1.5, 3.0, 3.2, 1.75, 2.3, 0.11, 0.27, 1.09]
+number_of_presses = 4
 
-# fd = FairDistribution.new([0.23, 0.47, 0.73, 1.5, 3.0, 3.2], 4)
-# fd.time_required
-# p fd.distribution
-
-def standard_deviation distrib
-
-  sums = Array.new
-  distrib.each do |d|
-    sums << d.reduce(0.0, :+)
-  end
-
-  mean = sums.reduce(0.0, :+) / distrib.size
-  variance = sums.inject(0.0) {|sum, n| sum + (n - mean) * (n - mean) } / distrib.size
-
-  return Math.sqrt(variance)
-end
-
-p standard_deviation  [
-                       [2],
-                       [4],
-                       [4],
-                       [4],
-                       [5],
-                       [5],
-                       [7],
-                       [9]
-                      ]
+exp_max           = 3.73
+fd = FairDistribution.new(jobs, number_of_presses)
+p fd.time_required
+p fd.distribution
