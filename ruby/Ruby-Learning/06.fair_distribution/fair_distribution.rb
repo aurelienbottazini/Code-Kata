@@ -47,10 +47,12 @@ class FairDistribution
       
       if @distribution == nil
         @distribution = distrib
+        p @distribution
       end
       if  time_required(distrib) <= time_required(@distribution)
         if standard_deviation(distrib) < standard_deviation(@distribution)
           @distribution = distrib
+          p @distribution
         end
       end
     end
@@ -102,7 +104,6 @@ end
 jobs              = [0.23, 0.47, 0.73, 1.5, 3.0, 3.2, 1.75, 2.3, 0.11, 0.27, 1.09]
 number_of_presses = 4
 
-exp_max           = 3.73
 fd = FairDistribution.new(jobs, number_of_presses)
 p fd.time_required
 p fd.distribution
