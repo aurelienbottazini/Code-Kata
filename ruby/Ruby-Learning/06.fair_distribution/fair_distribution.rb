@@ -19,6 +19,7 @@ Note:
 Class ensure that jobs is an array containing only positive numeric
 Class ensure that number_of_presses is valid (positive and an integer)
 
+tested with ruby 1.8.6-p388, 1.8.7-p249 and 1.9.1-p378
 =end
 class FairDistribution
 
@@ -43,7 +44,7 @@ class FairDistribution
     @number_of_presses = number_of_presses
 
     # starting with the highest time possible (sum of all jobs)
-    @time_required = jobs.reduce(0.0, :+)
+    @time_required = jobs.inject(0.0) { |sum, n| sum + n }
 
     # will hold signatures of tested distributions (so that we don't
     # try to compute equivalent distribution)
@@ -96,7 +97,7 @@ class FairDistribution
     #   are equivalent and only one of them needs to be tested.
     signature = String.new
     distrib.each_with_index {|e, index| distrib[index] = e.sort }
-    distrib.sort {|a,b| a.reduce(0.0, :+) <=> b.reduce(0.0, :+)}.each do |press|
+    distrib.sort {|a,b| a.inject(0.0) { |sum, n| sum + n } <=> b.inject(0.0) { |sum, n| sum + n } }.each do |press|
       press.each { |job| signature << "#{job};" }
       signature << "|"
     end
@@ -147,10 +148,10 @@ class FairDistribution
 
     sums = Array.new
     distrib.each do |d|
-      sums << d.reduce(0.0, :+)
+      sums << d.inject(0.0) { |sum, n| sum + n }
     end
 
-    mean = sums.reduce(0.0, :+) / distrib.size
+    mean = sums.inject(0.0) { |sum, n| sum + n } / distrib.size
     variance = sums.inject(0.0) {|sum, n| sum + (n - mean) * (n - mean) } / distrib.size
     return Math.sqrt(variance)
   end
@@ -160,7 +161,7 @@ class FairDistribution
     time_required = 0.0
     if distrib != nil
       distrib.each do |d|
-        d_time_required = d.reduce(0.0, :+)
+        d_time_required = d.inject(0) { |sum, n| sum + n }
         if  d_time_required > time_required
           time_required = d_time_required
         end
