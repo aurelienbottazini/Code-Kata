@@ -10,6 +10,14 @@ The goal of this class is to schedule printing jobs between printing machines (p
 
 Class ensure that number_of_presses is valid (positive and an integer)
 Class ensure that jobs is an array containing only positive numeric
+
+Usage:
+ jobs = [5,5,4,4,3,3,3]
+ number_of_presses = 3
+
+ fd = FairDistribution.new(jobs, number_of_presses)
+ fd.time_required
+ fd.distribution
 =end
 class FairDistribution
 
@@ -63,9 +71,10 @@ class FairDistribution
 
     signature = String.new
     distrib.each_with_index {|e, index| distrib[index] = e.sort }
-    distrib.sort {|a,b| a.reduce(0.0, :+) <=> b.reduce(0.0, :+)}.each { |e| signature << "#{e};"}
-    signature << "||"
-    jobs.each { |j| signature << "#{j};"}
+    distrib.sort {|a,b| a.reduce(0.0, :+) <=> b.reduce(0.0, :+)}.each do |press|
+      press.each { |job| signature << "#{job};" }
+      signature << "|"
+    end
     
     if !@signatures.key?(signature) && FairDistribution.time_required(distrib) <= @time_required
       @signatures[signature] = 1
