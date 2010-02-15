@@ -7,8 +7,7 @@ class FairDistribution
 
   def initialize jobs, number_of_presses
 
-    @distribution = nil
-    @jobs = jobs
+    @distribution      = nil
     @number_of_presses = number_of_presses
 
     distrib = [[]]
@@ -20,8 +19,9 @@ class FairDistribution
     time_required = 0.0
     if distrib != nil
       distrib.each do |d|
-        if d.reduce(0.0, :+) > time_required
-          time_required = d.reduce(0.0, :+)
+        d_time_required = d.reduce(0.0, :+)
+        if  d_time_required > time_required
+          time_required = d_time_required
         end
       end
     end
@@ -58,8 +58,8 @@ class FairDistribution
 
         distrib_copy2 = dup_distrib(distrib_copy)
         distrib_copy2 << Array.new
-        jobs_copy2 = jobs.dup
-        jobs_copy2.slice!(index)
+        jobs_copy2 = jobs_copy.dup
+
 
         distribute_jobs distrib_copy, jobs_copy
         distribute_jobs distrib_copy2, jobs_copy2
