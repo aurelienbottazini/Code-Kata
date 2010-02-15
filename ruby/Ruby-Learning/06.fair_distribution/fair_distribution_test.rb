@@ -4,7 +4,7 @@ require 'fair_distribution'
 #FairDistribution = LowMemoryFairDistribution
 
 class FairQueueTest < Test::Unit::TestCase
-
+  
   def test_basic1
     jobs              = [10, 15, 20, 24, 30, 45, 75]
     number_of_presses = 2
@@ -96,6 +96,41 @@ class FairQueueTest < Test::Unit::TestCase
     assert_equal exp_max, fd.time_required
   end
 
+    def test_empty_jobs
+    jobs = []
+    number_of_presses = 2
+
+    fd = FairDistribution.new(jobs, number_of_presses)
+    assert_equal 0.0 , fd.time_required
+    assert_distributions_are_equivalent [[],[]], fd.distribution
+  end
+
+  def test_zero_press
+    jobs = [1,2,3,4,5,6]
+    number_of_presses = 0
+
+    assert_raise(ArgumentError) { FairDistribution.new(jobs, number_of_presses) }
+  end
+
+  def test_float_number_of_press
+    jobs = [3,4,5,6,7,8]
+    number_of_presses = 2.3
+
+    assert_raise(ArgumentError) { FairDistribution.new(jobs, number_of_presses) }
+  end
+
+  def test_bad_jobs
+    jobs = ["dscscds", 1, 2.3]
+    number_of_presses = 3
+
+    assert_raise(ArgumentError) { FairDistribution.new(jobs, number_of_presses)}
+
+    jobs = [5, 2, -3]
+    assert_raise(ArgumentError) { FairDistribution.new(jobs, number_of_presses)}
+
+    jobs = "wrong"
+    assert_raise(ArgumentError) { FairDistribution.new(jobs, number_of_presses)}
+  end
 
   # Testing Implementation
   # def test_arrays_have_same_elements

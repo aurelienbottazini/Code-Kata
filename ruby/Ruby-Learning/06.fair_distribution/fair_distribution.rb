@@ -1,14 +1,42 @@
+=begin
+Original problem  url: http://rubylearning.com/blog/2010/01/26/rpcfn-fair-distribution-6/
+
+The goal of this class is to schedule printing jobs between printing machines (presses)
+
+  Jobs should be distributed "in such a manner that (a) all t-shirts are printed in the least amount of time,
+ and (b) the distribution of work across machines is as fair as possible (i.e. the standard deviation
+ of the time each machine spends working is minimized)."
+
+
+Class ensure that number_of_presses is valid (positive and an integer)
+Class ensure that jobs is an array containing only positive numeric
+=end
 class FairDistribution
 
   attr_accessor :distribution, :time_required
 
   def initialize jobs, number_of_presses
 
-    @distribution      = nil
+    if number_of_presses.integer? == false || number_of_presses < 1
+      raise ArgumentError, "The number of presses needs to be an integer greater or equal to 1"
+    end
+
+    if jobs.is_a?(Array) == false
+      raise ArgumentError, "jobs should be an array containing positive numeric"
+    end
+
+    jobs.each do |job|
+      if job.is_a?(Numeric) == false || job < 0
+        raise ArgumentError, "All Jobs should be positive numeric"
+      end
+    end
+    
     @number_of_presses = number_of_presses
     @time_required     = jobs.reduce(0.0, :+)
     @signatures        = Hash.new
-
+    @distribution      = []
+    number_of_presses.times { @distribution << Array.new }
+    
     distrib = [[]]
     distribute_jobs distrib, jobs.dup
   end
@@ -18,13 +46,12 @@ class FairDistribution
 
   def distribute_jobs distrib, jobs
 
-    # si on est au nombre max de distrib, on arrete
     if distrib.size == @number_of_presses
       while !jobs.empty?
         distrib.last << jobs.pop
       end
 
-      if @distribution == nil
+      if FairDistribution.is_distribution_empty?(@distribution)
         @distribution = distrib
       elsif FairDistribution.time_required(distrib) <= @time_required
         if FairDistribution.standard_deviation(distrib) < FairDistribution.standard_deviation(@distribution)
@@ -97,11 +124,17 @@ class FairDistribution
     return time_required
   end
 
+  def self.is_distribution_empty? distrib
+    is_empty = true
+
+    distrib.each do |d|
+      if d.size > 0
+        is_empty = false
+        break
+      end
+    end
+
+    return is_empty
+  end
+
 end
-
-jobs              = [1.0, 4.75, 2.83, 1.1, 5.8, 3.5, 4.4]
-number_of_presses = 4
-
-fd = FairDistribution.new(jobs, number_of_presses)
-p fd.time_required
-p fd.distribution
