@@ -42,8 +42,7 @@ class FairDistribution
 
       if @distribution == nil
         @distribution = distrib
-      end
-      if  time_required(distrib) <= time_required(@distribution)
+      elsif time_required(distrib) <= time_required(@distribution)
         if standard_deviation(distrib) < standard_deviation(@distribution)
           @distribution = distrib
         end
