@@ -7,10 +7,6 @@ The goal of this class is to schedule printing jobs between printing machines (p
  and (b) the distribution of work across machines is as fair as possible (i.e. the standard deviation
  of the time each machine spends working is minimized)."
 
-
-Class ensure that number_of_presses is valid (positive and an integer)
-Class ensure that jobs is an array containing only positive numeric
-
 Usage:
  jobs = [5,5,4,4,3,3,3]
  number_of_presses = 3
@@ -18,6 +14,11 @@ Usage:
  fd = FairDistribution.new(jobs, number_of_presses)
  fd.time_required
  fd.distribution
+
+Note:
+Class ensure that jobs is an array containing only positive numeric
+Class ensure that number_of_presses is valid (positive and an integer)
+
 =end
 class FairDistribution
 
@@ -42,14 +43,14 @@ class FairDistribution
     @number_of_presses = number_of_presses
 
     # starting with the highest time possible (sum of all jobs)
-    @time_required     = jobs.reduce(0.0, :+)
+    @time_required = jobs.reduce(0.0, :+)
 
     # will hold signatures of tested distributions (so that we don't
-    # try to compute the same distribution twice)
-    @signatures        = Hash.new
+    # try to compute equivalent distribution)
+    @signatures = Hash.new
 
-    #initializing an empty distribution with the correct number of presses
-    @distribution      = []
+    # initializing an empty distribution with the correct number of presses
+    @distribution = []
     number_of_presses.times { @distribution << Array.new }
 
     # sets @time_required and @distribution
@@ -78,8 +79,8 @@ class FairDistribution
       # we don't have any solution yet, copy this one
       if FairDistribution.is_distribution_empty?(@distribution)
         @distribution = distrib
-      # let's check if this distribution is better than our previous
-      # best and make it the new solution if it is
+        # let's check if this distribution is better than our previous
+        # best and make it the new solution if it is
       elsif FairDistribution.time_required(distrib) <= @time_required &&
           FairDistribution.standard_deviation(distrib) < FairDistribution.standard_deviation(@distribution)
         @distribution = distrib
@@ -89,8 +90,10 @@ class FairDistribution
       return
     end
 
-    # create a signature for this distribution so that we don't test twice
-    # identical distributions
+    # create a signature for this distribution so that we don't test
+    # equivalent distributions.
+    # ex: [[5, 4], [5, 4], [3, 3, 3]] and  [[4, 5], [5, 4], [3, 3, 3]]
+    #   are equivalent and only one of them needs to be tested.
     signature = String.new
     distrib.each_with_index {|e, index| distrib[index] = e.sort }
     distrib.sort {|a,b| a.reduce(0.0, :+) <=> b.reduce(0.0, :+)}.each do |press|
@@ -100,30 +103,31 @@ class FairDistribution
 
     # have we tried yet this distribution?
     if @signatures.key?(signature) == false
-      # we should stop testing this distribution as possible answer if
-      # we have exceeded the @time_required of our current best distribution
-      if FairDistribution.time_required(distrib) <= @time_required
 
+      # we have exceeded the @time_required of our current best
+      # distribution, we don't need to test this distribution
+      if FairDistribution.time_required(distrib) <= @time_required
         # mark this distribution has tried
         @signatures[signature] = 1
 
         jobs.each_with_index do |job, index|
 
-          # we create a new distribution, adding one job in last press
+          # we create two new distributions
+          # First one : we add one job in last press
+          # Second one: we add one job in last press and we add one
+          # more press
           distrib_copy =  FairDistribution.dup_distrib(distrib)
           distrib_copy.last << job
-
-          # we create a new distribution, adding one job in last press
-          # and adding a new press
           distrib_copy2 = FairDistribution.dup_distrib(distrib_copy)
           distrib_copy2 << Array.new
 
+          # copying remaining jobs list and removing the job we added
+          # in the two new distributions
           jobs_copy = jobs.dup
           jobs_copy.slice!(index)
-          jobs_copy2 = jobs_copy.dup
 
           distribute_jobs distrib_copy, jobs_copy
-          distribute_jobs distrib_copy2, jobs_copy2
+          distribute_jobs distrib_copy2, jobs_copy.dup
         end
       end
     end
