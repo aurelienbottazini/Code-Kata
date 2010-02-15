@@ -8,7 +8,7 @@ class FairDistribution
   def initialize jobs, number_of_presses
 
     @distribution = nil
-
+    @jobs = jobs
     @number_of_presses = number_of_presses
 
     distrib = [[]]
@@ -18,10 +18,9 @@ class FairDistribution
   def time_required distrib=@distribution
 
     time_required = 0.0
-
     if distrib != nil
-      distrib[0..distrib.size].each do |d|
-        if d.reduce(0.0, :+) > time_required || time_required == 0.0
+      distrib.each do |d|
+        if d.reduce(0.0, :+) > time_required
           time_required = d.reduce(0.0, :+)
         end
       end
