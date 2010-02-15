@@ -96,13 +96,17 @@ class FairQueueTest < Test::Unit::TestCase
     assert_equal exp_max, fd.time_required
   end
 
-    def test_empty_jobs
+  def test_empty_jobs
     jobs = []
     number_of_presses = 2
-
+      
     fd = FairDistribution.new(jobs, number_of_presses)
     assert_equal 0.0 , fd.time_required
     assert_distributions_are_equivalent [[],[]], fd.distribution
+
+    number_of_presses = 1
+    fd = FairDistribution.new(jobs, number_of_presses)
+    assert_distributions_are_equivalent [[]], fd.distribution
   end
 
   def test_zero_press
