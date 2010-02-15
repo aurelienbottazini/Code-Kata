@@ -1,6 +1,3 @@
-require 'rubygems'
-require 'ruby-debug'
-
 class FairDistribution
 
   attr_accessor :distribution, :time_required
@@ -10,6 +7,7 @@ class FairDistribution
     @distribution      = nil
     @number_of_presses = number_of_presses
     @time_required = jobs.reduce(0.0, :+)
+    @signatures = Hash.new
     distrib = [[]]
     distribute_jobs distrib, jobs.dup
   end
@@ -35,22 +33,15 @@ class FairDistribution
       end
     end
 
-    if FairDistribution.time_required(distrib) <= @time_required
+    signature = String.new
+    distrib.each_with_index {|e, index| distrib[index] = e.sort }
+    distrib.sort {|a,b| a.reduce(0.0, :+) <=> b.reduce(0.0, :+)}.each { |e| signature << "#{e};"}
+    signature << "||"
+    jobs.each { |j| signature << "#{j};"}
+    
+    if !@signatures.key?(signature) && FairDistribution.time_required(distrib) <= @time_required
+      @signatures[signature] = 1
       jobs.each_with_index do |job, index|
-
-        # distrib_copy =  dup_distrib(distrib)
-        # jobs_copy = jobs.dup
-
-        # current_press_time = distrib_copy.last.reduce(0.0, :+)
-
-        # if current_press_time < jobs_copy.reduce(0.0, :+)
-        #   distrib_copy.last << job
-        #   jobs_copy.slice!(index)
-        # else
-        #   distrib_copy << Array.new
-        # end
-
-        # distribute_jobs distrib_copy, jobs_copy
 
         distrib_copy =  FairDistribution.dup_distrib(distrib)
         distrib_copy.last << job

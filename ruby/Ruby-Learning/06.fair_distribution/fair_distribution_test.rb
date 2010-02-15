@@ -73,28 +73,28 @@ class FairQueueTest < Test::Unit::TestCase
     assert_distributions_are_equivalent [[3.0], [3.2], [0.23, 0.47, 0.73], [1.5]], fd.distribution
   end
 
-  # def test_basic6
-  #   jobs = [5,5,4,4,3,3,3,1,1,1]
-  #   number_of_presses = 3
+  def test_basic6
+    jobs = [5,5,4,4,3,3,3,1,1,1]
+    number_of_presses = 3
 
-  #   exp_max = 10
-  #   fd = FairDistribution.new(jobs, number_of_presses)
-  #   assert_equal exp_max, fd.time_required
-  # end
+    exp_max = 10
+    fd = FairDistribution.new(jobs, number_of_presses)
+    assert_equal exp_max, fd.time_required
+  end
 
-  # def test_basic7
-  #   jobs = [10,10,1,1,1,1,1,1]
-  #   number_of_presses = 3
+  def test_basic7
+    jobs = [10,10,1,1,1,1,1,1]
+    number_of_presses = 3
 
-  #   exp_max = 10
-  #   exp_distribution = [
-  #                       [10],
-  #                       [10],
-  #                       [1,1,1,1,1,1],
-  #                      ]
-  #   fd = FairDistribution.new(jobs, number_of_presses)
-  #   assert_equal exp_max, fd.time_required
-  # end
+    exp_max = 10
+    exp_distribution = [
+                        [10],
+                        [10],
+                        [1,1,1,1,1,1],
+                       ]
+    fd = FairDistribution.new(jobs, number_of_presses)
+    assert_equal exp_max, fd.time_required
+  end
 
 
   # Testing Implementation
