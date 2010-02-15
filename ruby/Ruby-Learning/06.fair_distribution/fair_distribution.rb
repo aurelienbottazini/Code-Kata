@@ -6,8 +6,9 @@ class FairDistribution
 
     @distribution      = nil
     @number_of_presses = number_of_presses
-    @time_required = jobs.reduce(0.0, :+)
-    @signatures = Hash.new
+    @time_required     = jobs.reduce(0.0, :+)
+    @signatures        = Hash.new
+
     distrib = [[]]
     distribute_jobs distrib, jobs.dup
   end
