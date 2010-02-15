@@ -11,22 +11,19 @@ class FairDistribution
 
     @number_of_presses = number_of_presses
 
-    distrib = Array.new
-    distrib << Array.new
+    distrib = [[]]
     distribute_jobs distrib, jobs.dup
   end
 
   def time_required distrib=@distribution
 
-    if distrib == nil
-      return 0
-    end
-
     time_required = 0.0
 
-    distrib[0..distrib.size].each do |d|
-      if d.reduce(0.0, :+) > time_required || time_required == 0.0
-        time_required = d.reduce(0.0, :+)
+    if distrib != nil
+      distrib[0..distrib.size].each do |d|
+        if d.reduce(0.0, :+) > time_required || time_required == 0.0
+          time_required = d.reduce(0.0, :+)
+        end
       end
     end
 
@@ -42,7 +39,7 @@ class FairDistribution
       while !jobs.empty?
         distrib.last << jobs.pop
       end
-      
+
       if @distribution == nil
         @distribution = distrib
       end
@@ -55,7 +52,7 @@ class FairDistribution
 
     if time_required(distrib) <= time_required || @distribution == nil
       jobs.each_with_index do |job, index|
-        
+
         distrib_copy =  dup_distrib(distrib)
         distrib_copy.last << job
         jobs_copy = jobs.dup
@@ -65,7 +62,7 @@ class FairDistribution
         distrib_copy2 << Array.new
         jobs_copy2 = jobs.dup
         jobs_copy2.slice!(index)
-        
+
         distribute_jobs distrib_copy, jobs_copy
         distribute_jobs distrib_copy2, jobs_copy2
       end
@@ -73,8 +70,8 @@ class FairDistribution
   end
 
   def dup_distrib distrib
-    new_distrib = Array.new
 
+    new_distrib = Array.new
     distrib.each do |d|
       new_distrib << d.dup
     end
@@ -91,7 +88,6 @@ class FairDistribution
 
     mean = sums.reduce(0.0, :+) / distrib.size
     variance = sums.inject(0.0) {|sum, n| sum + (n - mean) * (n - mean) } / distrib.size
-
     return Math.sqrt(variance)
   end
 
