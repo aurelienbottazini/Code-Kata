@@ -39,20 +39,16 @@ class FairDistribution
 
     # si on est au nombre max de distrib, on arrete
     if distrib.size == @number_of_presses
-      jobs.each do |job|
-        distrib.last << job
+      while !jobs.empty?
+        distrib.last << jobs.pop
       end
-      #emptying array as, all remaining elements have been added
-      jobs = Array.new
       
       if @distribution == nil
         @distribution = distrib
-        p @distribution
       end
       if  time_required(distrib) <= time_required(@distribution)
         if standard_deviation(distrib) < standard_deviation(@distribution)
           @distribution = distrib
-          p @distribution
         end
       end
     end
@@ -101,7 +97,7 @@ class FairDistribution
 
 end
 
-jobs              = [0.23, 0.47, 0.73, 1.5, 3.0, 3.2, 1.75, 2.3, 0.11, 0.27, 1.09]
+jobs              = [1.0, 4.75, 2.83, 1.1, 5.8, 3.5, 4.4]
 number_of_presses = 4
 
 fd = FairDistribution.new(jobs, number_of_presses)
