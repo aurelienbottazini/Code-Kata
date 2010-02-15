@@ -107,9 +107,9 @@ class FairDistribution
 
 end
 
-# jobs              = [1.0, 4.75, 2.83, 1.1, 5.8, 3.5, 4.4]
-# number_of_presses = 4
+jobs              = [1.0, 4.75, 2.83, 1.1, 5.8, 3.5, 4.4]
+number_of_presses = 4
 
-# fd = FairDistribution.new(jobs, number_of_presses)
-# p fd.time_required
-# p fd.distribution
+fd = FairDistribution.new(jobs, number_of_presses)
+p fd.time_required
+p fd.distribution
