@@ -1,3 +1,12 @@
+=begin
+Original url: http://rubylearning.com/blog/2009/12/27/rpcfn-mazes-5/
+
+"In this Ruby challenge, you will need to develop a class that can be used
+ to solve mazes. Mazes will be provided as a string showing a graphical representation
+of the maze's layout. Spaces are navigable, while # (pound) symbols #
+ are used to denote walls. In this challenge the letter A is used to mark the start
+ point, and B the end point."
+=end
 class Maze
 
   ENTRANCE = 'A'
@@ -59,28 +68,28 @@ class Maze
   # steps when an way to exit the maze is found in @steps
   # This algorithm will try find all possible paths
   def find_exit(position, steps, maze)
-    
+
     if is_exit?(position)
       @steps << steps
     end
-    
+
     mark_as_tried(position, maze)
-    
+
     left = Position.new(position.row, position.column - 1)
     if movable?(left, maze)
       find_exit(left, steps + 1, dup_maze(maze))
     end
-        
+
     right = Position.new(position.row, position.column + 1)
     if movable?(right, maze)
       find_exit(right, steps + 1, dup_maze(maze))
     end
-    
+
     up = Position.new(position.row - 1, position.column)
     if movable?(up, maze)
       find_exit(up, steps + 1, dup_maze(maze))
     end
-    
+
     down = Position.new(position.row + 1, position.column)
     if movable?(down, maze)
       find_exit(down, steps + 1, dup_maze(maze))
