@@ -13,18 +13,27 @@ class BotTrust
     o_button = o_buttons.size > 0 ? o_buttons.shift : 0
     b_button = b_buttons.size > 0 ? b_buttons.shift : 0
     current_button = nil
+    last_button_type = nil
     running = true
     while(running)
       if o_button < b_button
         if current_button != "b#{b_button}"
           time_required = time_required + b_button
           current_button = "b#{b_button}"
+          if last_button_type == 'b'
+            time_required = time_required + 1
+          end
+          last_button_type = 'b'
         end
         o_button = o_buttons.size > 0 ? o_buttons.shift : 0
       else
         if current_button != "o#{o_button}"
           time_required = time_required + o_button
           current_button = "o#{o_button}"
+          if last_button_type == 'o'
+            time_required = time_required + 1
+          end
+          last_button_type = 'o'
         end
         b_button = b_buttons.size > 0 ? b_buttons.shift : 0
       end
