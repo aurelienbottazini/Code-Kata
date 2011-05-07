@@ -1,4 +1,4 @@
-$:.unshift File.expand_path('..')
+$:.unshift File.expand_path('./')
 require 'rubygems'
 require 'rspec'
 
