@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 class BotTrust
 
   attr_reader :number_of_test_cases
@@ -17,6 +18,9 @@ class BotTrust
     o_position = 1
     robot_time_cumul = 0
     old_time_cumul = 0
+    number_cumuled_elements = 0
+    old_number_cumuled_elements = 0
+
     b_position = 1
     time_required = 0
     previous_robot = nil
@@ -36,13 +40,24 @@ class BotTrust
 
       if n_term_robot != previous_robot && previous_robot != nil
         if robot_time_cumul > time_to_move
-          time_required = time_required + robot_time_cumul - old_time_cumul
+          time_required = time_required + robot_time_cumul
+          if robot_time_cumul > number_cumuled_elements
+            p 'here'
+            time_required = time_required - old_time_cumul
+          end
+
         end
         old_time_cumul = robot_time_cumul
+        old_number_cumuled_elements = number_cumuled_elements
         robot_time_cumul = 0
+        number_cumuled_elements = 0
       end
       robot_time_cumul = robot_time_cumul + time_to_move + 1
+      number_cumuled_elements = number_cumuled_elements + 1
+
       previous_robot = n_term_robot
+      p time_required
+
     end
     time_required = time_required + robot_time_cumul
 
@@ -57,7 +72,7 @@ class BotTrust
   # integer N, representing the number of buttons that need to be
   # pressed. This is followed by N terms of the form "Ri Pi" where Ri
   # is a robot color (always 'O' or 'B'), and Pi is a button position.
-  def find_sequence
+  def print_result
     times_required = Array.new
     @test_cases.each do |test_case|
       times_required << get_time_required(test_case)
@@ -69,7 +84,10 @@ class BotTrust
 
   end
 
-
-
-
 end
+
+# if ARGV[0]
+#   @bt = BotTrust.new(ARGV[0])
+#   @bt.print_result
+# end
+
