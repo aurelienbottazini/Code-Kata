@@ -16,9 +16,11 @@ class BotTrust
 
     o_position = 1
     robot_time_cumul = 0
+    old_time_cumul = 0
     b_position = 1
     time_required = 0
     previous_robot = nil
+
     n_terms.each do |n_term|
       n_term_robot, n_term_position = n_term.split(' ')
       n_term_position = n_term_position.to_i
@@ -34,15 +36,12 @@ class BotTrust
 
       if n_term_robot != previous_robot && previous_robot != nil
         if robot_time_cumul > time_to_move
-          time_required = time_required + robot_time_cumul
-        else
-          time_required = time_required + time_to_move + 1
+          time_required = time_required + robot_time_cumul - old_time_cumul
         end
+        old_time_cumul = robot_time_cumul
         robot_time_cumul = 0
-      else
-        robot_time_cumul = robot_time_cumul + time_to_move + 1
       end
-
+      robot_time_cumul = robot_time_cumul + time_to_move + 1
       previous_robot = n_term_robot
     end
     time_required = time_required + robot_time_cumul

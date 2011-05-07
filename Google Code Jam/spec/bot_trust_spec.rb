@@ -17,8 +17,8 @@ describe BotTrust do
 
   it "should get the correct result for sample" do
     @bt.get_time_required('4 O 2 B 1 B 2 O 4').should eql 6
-    # @bt.get_time_required('3 O 5 O 8 B 100').should eql 100
-    # @bt.get_time_required('2 B 2 B 1').should eql 4
+    @bt.get_time_required('3 O 5 O 8 B 100').should eql 100
+    @bt.get_time_required('2 B 2 B 1').should eql 4
   end
 
   it "should give a correct move time" do
