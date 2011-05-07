@@ -4,7 +4,7 @@ require 'rspec'
 require 'fileutils'
 RSpec.configure do |config|
 
-  TMP_DIR ||= File.expand_path('~/projects/Code-Kata/Google Code Jam/tmp/')
+  TMP_DIR ||= File.expand_path('~/projects/Code-Kata/Google Code Jam/spec/tmp/')
   DATA_DIR ||= File.expand_path('~/projects/Code-Kata/Google Code Jam/spec/data/')
 
   config.after :each do

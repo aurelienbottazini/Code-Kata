@@ -12,6 +12,13 @@ describe BotTrust do
   end
 
   it "should get the correct result for sample" do
+    @bt.find_sequence
+
+    open("#{TMP_DIR}/bot_trust_generated.txt", 'r:utf-8') do |generated_file|
+      open("#{DATA_DIR}/bot_trust_result.txt", 'r:utf-8') do |test_file|
+        generated_file.read.should eql test_file.read
+      end
+    end
   end
 
 end
