@@ -4,4 +4,8 @@ class BotTrust
 
   end
 
+  def find_sequence
+    raise 'Not implemented'
+  end
+
 end
