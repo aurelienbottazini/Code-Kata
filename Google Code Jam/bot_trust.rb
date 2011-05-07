@@ -22,10 +22,7 @@ class BotTrust
       n_term_position = n_term_position.to_i
 
       current_position = n_term_robot == 'O' ? o_position : b_position
-      if current_position != n_term_position
-
-      end
-
+      time_required = time_required + time_to_move_and_push_button(current_position, n_term_position)
     end
 
     time_required
