@@ -26,9 +26,10 @@ describe BotTrust do
     BotTrust.time_to_move(3, 3).should eql 0
     BotTrust.time_to_move(2, 1).should eql 1
   end
-  # it "should get the correct output" do
-  #   @bt.find_sequence
-  # end
+
+  it "should get the correct output" do
+    @bt.find_sequence
+  end
 
 end
 
