@@ -2,6 +2,7 @@
 class BotTrust
 
   attr_reader :number_of_test_cases
+  BUTTON_CLICK = 1
 
   def initialize sample_file_path
     @lines = File.readlines(sample_file_path)
@@ -10,57 +11,63 @@ class BotTrust
   end
 
   def get_time_required sequence
-
+    time_required = 0
     number_of_buttons, n_terms = sequence.split(' ', 2)
     n_terms = n_terms.chomp
     n_terms = n_terms.scan(/[OB] [0-9]+/)
-
-    o_position = 1
-    robot_time_cumul = 0
-    old_time_cumul = 0
-    number_cumuled_elements = 0
-    old_number_cumuled_elements = 0
-
-    b_position = 1
-    time_required = 0
+    simplified_n_terms = Array.new
     previous_robot = nil
+
+    o_pos = 1
+    b_pos = 1
 
     n_terms.each do |n_term|
       n_term_robot, n_term_position = n_term.split(' ')
       n_term_position = n_term_position.to_i
+      robot_position = 0
 
-      current_position = n_term_robot == 'O' ? o_position : b_position
-      time_to_move = BotTrust.time_to_move(n_term_position, current_position)
-      current_position = n_term_position
       if n_term_robot == 'O'
-        o_position = current_position
+        robot_position = o_pos
+        o_pos = n_term_position
       else
-        b_position = current_position
+        robot_position = b_pos
+        b_pos = n_term_position
       end
 
-      if n_term_robot != previous_robot && previous_robot != nil
-        if robot_time_cumul > time_to_move
-          time_required = time_required + robot_time_cumul
-          if robot_time_cumul > number_cumuled_elements
-            p 'here'
-            time_required = time_required - old_time_cumul
-          end
+      action_cost = BotTrust.time_to_move(robot_position, n_term_position)
+      action_cost = action_cost + BUTTON_CLICK
 
-        end
-        old_time_cumul = robot_time_cumul
-        old_number_cumuled_elements = number_cumuled_elements
-        robot_time_cumul = 0
-        number_cumuled_elements = 0
+      if previous_robot != n_term_robot
+        simplified_n_terms << [action_cost]
+      else
+        simplified_n_terms[simplified_n_terms.size - 1] << action_cost
       end
-      robot_time_cumul = robot_time_cumul + time_to_move + 1
-      number_cumuled_elements = number_cumuled_elements + 1
-
       previous_robot = n_term_robot
-      p time_required
+    end
+
+    p simplified_n_terms
+    simplified_n_terms.each_with_index do |term, index|
+      term_sum = term.inject(0) { |s,v| s += v }
+      time_required = time_required + term_sum
+
+      if index > 0
+        if term[0] > 1
+          previous_term = simplified_n_terms[index - 1]
+          previous_term_sum = term.inject(0) { |s,v| s += v}
+
+          psum = 0
+          previous_term.reverse.each do |pterm|
+            if (psum + pterm) < term_sum
+              psum += pterm
+            end
+          end
+          p psum
+          time_required = time_required - psum
+        end
+
+      end
 
     end
-    time_required = time_required + robot_time_cumul
-
     time_required
   end
 

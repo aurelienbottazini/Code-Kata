@@ -20,6 +20,7 @@ describe BotTrust do
     @bt.get_time_required('3 O 5 O 8 B 100').should eql 100
     @bt.get_time_required('2 B 2 B 1').should eql 4
     @bt.get_time_required('10 B 1 B 1 B 1 B 1 O 1 B 1 O 1 O 1 B 1 B 1').should eql 10
+    @bt.get_time_required('10 O 26 B 28 O 60 B 62 O 37 B 41 B 13 O 7 B 28 O 21').should eql 154
   end
 
   it "should give a correct move time" do
