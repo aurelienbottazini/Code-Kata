@@ -11,15 +11,17 @@ describe BotTrust do
   it "should initialize" do
   end
 
-  it "should get the correct result for sample" do
-    @bt.find_sequence
-
-    open("#{TMP_DIR}/bot_trust_generated.txt", 'r:utf-8') do |generated_file|
-      open("#{DATA_DIR}/bot_trust_result.txt", 'r:utf-8') do |test_file|
-        generated_file.read.should eql test_file.read
-      end
-    end
+  it "should get the correct number of test cases" do
+    @bt.number_of_test_cases.should eql 3
   end
+
+  it "should get the correct result for sample" do
+    @bt.get_time_required([2,4], [1,2]).should eql 6
+    @bt.get_time_required([5,8], [100]).should eql 100
+    @bt.get_time_required([0], [2,1]).should eql 4
+  end
+
+
 
 end
 
