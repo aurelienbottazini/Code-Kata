@@ -1,6 +1,6 @@
 class BotTrust
 
-  def initialize
+  def initialize sample_file_path
 
   end
 
