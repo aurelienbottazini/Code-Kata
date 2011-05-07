@@ -18,10 +18,12 @@ describe BotTrust do
   it "should get the correct result for sample" do
     @bt.get_time_required([2,4], [1,2]).should eql 6
     @bt.get_time_required([5,8], [100]).should eql 100
-    @bt.get_time_required([0], [2,1]).should eql 4
+    @bt.get_time_required([], [2,1]).should eql 4
   end
 
-
+  it "should get the correct output" do
+    @bt.find_sequence
+  end
 
 end
 

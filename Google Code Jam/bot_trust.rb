@@ -9,9 +9,9 @@ class BotTrust
   end
 
   def get_time_required o_buttons, b_buttons
-    o_button = o_buttons.shift
-    b_button = b_buttons.shift
     time_required = 0
+    o_button = o_buttons.size > 0 ? o_buttons.shift : 0
+    b_button = b_buttons.size > 0 ? b_buttons.shift : 0
     current_button = nil
     running = true
     while(running)
@@ -69,8 +69,13 @@ class BotTrust
       times_required << get_time_required(o_buttons, b_buttons)
     end
 
-    times_required
+    times_required.each_with_index do |time, index|
+      puts "Case ##{index + 1}: #{time}"
+    end
+
   end
+
+
 
 
 end
