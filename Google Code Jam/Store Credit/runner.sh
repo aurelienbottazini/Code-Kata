@@ -15,6 +15,5 @@ lines = lines[1..lines.size]
   solution.each do |value|
     solution_string << "#{value} "
   end
-  solution_string.chomp!
-  puts "Case ##{number}: #{solution_string}"
+  puts "Case ##{number}: #{solution_string.chop}"
 end
