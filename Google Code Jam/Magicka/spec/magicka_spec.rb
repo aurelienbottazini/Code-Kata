@@ -39,7 +39,12 @@ describe Magicka do
 
   context "7 example" do
     subject { Magicka.new("1 ARG 1 QF 10 ARQRSQFFSQ")}
-    its(:resulting_elements) { should == 'GSQ'}
+    its(:resulting_elements) { should == 'G'}
+  end
+
+  context "8 example" do
+    subject { Magicka.new("1 EDK 1 SF 10 SWADEASAEF")}
+    its(:resulting_elements) { should == ''}
   end
 
 
