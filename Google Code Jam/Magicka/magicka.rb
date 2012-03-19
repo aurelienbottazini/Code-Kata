@@ -46,7 +46,7 @@ class Magicka
 
           if index_of_last_opposed
             splitted = resulting_elements.split(resulting_elements[index_of_last_opposed..index], 2)
-            resulting_elements = splitted[0] + splitted[1]
+            resulting_elements = splitted[1]
             index = index_of_last_opposed
           end
         end
