@@ -47,6 +47,14 @@ describe Magicka do
     its(:resulting_elements) { should == ''}
   end
 
+  context "9 example" do
+    subject { Magicka.new("1 FRG 1 QD 10 SQAERRFDRF")}
+    its(:resulting_elements) { should == 'G'}
+  end
 
+  context "10 example" do
+    subject { Magicka.new("1 EEY 1 WR 10 WRWESRAEEA")}
+    its(:resulting_elements) { should == 'AYA'}
+  end
 
 end

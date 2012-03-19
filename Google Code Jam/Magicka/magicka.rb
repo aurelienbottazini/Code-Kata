@@ -41,13 +41,10 @@ class Magicka
 
       @opposed_elements.each do |opposed_elements|
         if resulting_elements[index] == opposed_elements[1]
-
-          index_of_last_opposed = resulting_elements[0..index-1].index(opposed_elements[0])
-
+          index_of_last_opposed = resulting_elements[0..index].index(opposed_elements[0])
           if index_of_last_opposed
-            splitted = resulting_elements.split(resulting_elements[index_of_last_opposed..index], 2)
-            resulting_elements = splitted[1]
-            index = index_of_last_opposed
+            resulting_elements = resulting_elements[index+1..-1]
+            index = 0
           end
         end
       end
