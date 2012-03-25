@@ -19,7 +19,6 @@ end
       map_number = next_map_number map_number
     end
   end
-
   base = chars_mapping.size
   base = 2 if base < 2
   smallest_time = 0
