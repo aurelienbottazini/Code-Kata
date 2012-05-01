@@ -1,0 +1,29 @@
+--- !ruby/object:Question 
+animal: 
+"no": !ruby/object:Question 
+  animal: an elephant
+  "no": false
+  question: 
+  "yes": true
+question: is it small?
+"yes": !ruby/object:Question 
+  animal: 
+  "no": !ruby/object:Question 
+    animal: a rat
+    "no": false
+    question: 
+    "yes": true
+  question: is it cute?
+  "yes": !ruby/object:Question 
+    animal: 
+    "no": !ruby/object:Question 
+      animal: a mouse
+      "no": false
+      question: 
+      "yes": true
+    question: can it swim?
+    "yes": !ruby/object:Question 
+      animal: a turtle
+      "no": false
+      question: 
+      "yes": true
