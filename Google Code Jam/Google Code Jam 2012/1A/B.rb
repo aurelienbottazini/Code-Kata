@@ -2,51 +2,70 @@ def debug text
   STDERR.puts text
 end
 
-def doable_levels ll
-  levels = ll.select { |l| (l[0][0] <= @stars && l[0][1] == false) || l[1][0] <= @stars && l[1][1] == false}
-  return levels
+def doable_levels?
+  @levels_list.each do |level|
+    star_1 = level[0]
+    if star_1[1] == false && star_1[0] <= @stars
+      return true
+    end
+
+    star_2 = level[1]
+    if star_2[1] == false && star_2[0] <= @stars
+      return true
+    end
+  end
+
+  return false
 end
 
-def find_2star_level_index ll
-  ll.each_with_index do |l, index|
-    if l[1][0] <= @stars && l[1][1] == false
+def find_2_star_level_index
+
+  @levels_list.each_with_index do |level, index|
+    star_1 = level[0]
+    star_2 = level[1]
+
+    if star_2[1] == false &&
+        star_2[0] <= @stars &&
+        star_1[1] == false &&
+        star_1[0] <= @stars
       return index
     end
   end
+
   return nil
 end
 
-def find_1star_level_index ll
-  ll.each_with_index do |l, index|
-    if l[0][0] <= @stars && l[0][1] == false
-      return index
-    end
-  end
-  return nil
-end
+def star_1_level_or_highest_2star_index
+  indexes = Array.new
+  @levels_list.each_with_index do |l, i|
+    star_1 = l[0]
+    star_2 = l[1]
 
-def complete_level index, star_mode
-
-  if star_mode == 1
-    @stars += 1
-    @levels_list[index][0][1] = true
-  else
-    first_star_status = @levels_list[index][0][1]
-    if first_star_status == true
-      @stars += 1
-    else
-      @stars += 2
+    if star_1[1] == true && star_2[1] == false && star_2[0] <= @stars
+      return i
     end
 
-    @levels_list.delete_at(index)
+    if star_1[1] == false && star_1[0] <= @stars
+      indexes << i
+    elsif star_2[1] == false && star_2[0] <= @stars
+      indexes << i
+    end
   end
 
-  @runs += 1
-end
 
+  star_2_val = -1
+  return_index = -1
+  indexes.each do |i|
+    if @levels_list[i][1][0] > star_2_val
+      star_2_val = @levels_list[i][1][0]
+      return_index = i
+    end
+  end
+
+  return return_index
+end
 
 1.upto(gets.to_i) do |case_number|
-  @runs = 0
 
   n = gets.to_i
   @levels_list = Array.new
@@ -56,26 +75,30 @@ end
   end
 
   @stars = 0
-  possible_levels = doable_levels @levels_list
+  @runs = 0
+  while doable_levels?
+    star2_level_index = find_2_star_level_index
 
-  while possible_levels.size > 0
+    if star2_level_index
+      @levels_list[star2_level_index][0][1] = true
+      @levels_list[star2_level_index][1][1] = true
+      @stars = @stars + 2
+    else
+      star1_level_index = star_1_level_or_highest_2star_index
+      @stars = @stars + 1
 
-  # if find 2 star level do it
-    level_index = find_2star_level_index(possible_levels)
-    if level_index
-      complete_level(level_index, 2)
-    else  # else do 1 star level
-      level_index = find_1star_level_index(possible_levels)
-      complete_level(level_index, 1)
+      if @levels_list[star1_level_index][0][1] == false
+        @levels_list[star1_level_index][0][1] = true
+      else
+        @levels_list[star1_level_index][1][1] = true
+      end
     end
-
-    possible_levels = doable_levels @levels_list
+    @runs += 1
   end
 
-  answer = 'Too Bad'
-
-  if doable_levels(@levels_list).size == 0 && @runs != 0
-    answer = @runs
+  answer = @runs
+  if @stars != 2*n
+    answer = 'Too Bad'
   end
 
   puts "Case ##{case_number}: #{answer}"
