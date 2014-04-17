@@ -23,7 +23,5 @@
   end
 
 
-
-
   puts "Case ##{case_number}: #{answer}"
 end
