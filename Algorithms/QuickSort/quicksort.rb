@@ -49,7 +49,7 @@ def partition(array, pivot_index, start_index, end_index)
     j += 1
   end
 
-  array[pivot_index], array[i -1] = array[i - 1], array[pivot_index]
+  array[pivot_index], array[i - 1] = array[i - 1], array[pivot_index]
 
   i - 1
 end
